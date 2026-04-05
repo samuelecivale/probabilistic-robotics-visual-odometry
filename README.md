@@ -1,4 +1,4 @@
-# Probabilistic Robotics — Visual Odometry
+# Probabilistic Robotics: Visual Odometry
 
 A complete visual odometry pipeline that estimates camera motion from image measurements and incrementally reconstructs a sparse 3D map of the observed scene.
 
