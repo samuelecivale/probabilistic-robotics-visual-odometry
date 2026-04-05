@@ -1,0 +1,131 @@
+=== FULL VISUAL ODOMETRY PIPELINE ===
+Initial map points: 115
+frame 000 | status=init_identity | map pts=115
+frame 001 | status=init_two_view | map pts=115
+frame 002 | status=ok | matches=108 | assoc_acc=1.0000 | reproj_mean=0.000992 px
+frame 003 | status=ok_no_valid_reprojection | matches=104 | assoc_acc=0.9904 | reproj_mean=NaN
+frame 004 | status=ok_no_valid_reprojection | matches=90 | assoc_acc=0.9556 | reproj_mean=NaN
+frame 005 | status=ok_no_valid_reprojection | matches=80 | assoc_acc=0.9250 | reproj_mean=NaN
+frame 006 | status=ok_no_valid_reprojection | matches=76 | assoc_acc=0.8816 | reproj_mean=NaN
+frame 007 | status=ok_no_valid_reprojection | matches=75 | assoc_acc=0.8400 | reproj_mean=NaN
+frame 008 | status=ok_no_valid_reprojection | matches=69 | assoc_acc=0.7681 | reproj_mean=NaN
+frame 009 | status=ok_no_valid_reprojection | matches=66 | assoc_acc=0.6818 | reproj_mean=NaN
+frame 010 | status=ok_no_valid_reprojection | matches=59 | assoc_acc=0.6271 | reproj_mean=NaN
+frame 011 | status=ok | matches=61 | assoc_acc=0.5738 | reproj_mean=148.858128 px
+frame 012 | status=ok_no_valid_reprojection | matches=62 | assoc_acc=0.5484 | reproj_mean=NaN
+frame 013 | status=ok | matches=58 | assoc_acc=0.4483 | reproj_mean=200.062035 px
+frame 014 | status=ok | matches=58 | assoc_acc=0.3448 | reproj_mean=241.770832 px
+frame 015 | status=ok | matches=55 | assoc_acc=0.2545 | reproj_mean=232.364430 px
+frame 016 | status=ok | matches=53 | assoc_acc=0.2264 | reproj_mean=247.029091 px
+frame 017 | status=ok | matches=58 | assoc_acc=0.1897 | reproj_mean=188.967725 px
+frame 018 | status=ok | matches=57 | assoc_acc=0.3509 | reproj_mean=225.672989 px
+frame 019 | status=ok_no_valid_reprojection | matches=51 | assoc_acc=0.4510 | reproj_mean=NaN
+frame 020 | status=ok | matches=51 | assoc_acc=0.4706 | reproj_mean=179.802290 px
+frame 021 | status=ok_no_valid_reprojection | matches=52 | assoc_acc=0.4615 | reproj_mean=NaN
+frame 022 | status=ok_no_valid_reprojection | matches=52 | assoc_acc=0.4231 | reproj_mean=NaN
+frame 023 | status=ok_no_valid_reprojection | matches=56 | assoc_acc=0.4286 | reproj_mean=NaN
+frame 024 | status=ok | matches=55 | assoc_acc=0.4000 | reproj_mean=309.342354 px
+frame 025 | status=ok | matches=54 | assoc_acc=0.3704 | reproj_mean=348.586538 px
+frame 026 | status=ok | matches=53 | assoc_acc=0.3962 | reproj_mean=333.652880 px
+frame 027 | status=ok | matches=50 | assoc_acc=0.3800 | reproj_mean=321.777057 px
+frame 028 | status=ok | matches=49 | assoc_acc=0.4082 | reproj_mean=296.827252 px
+frame 029 | status=ok | matches=48 | assoc_acc=0.3958 | reproj_mean=295.230201 px
+frame 030 | status=ok_no_valid_reprojection | matches=49 | assoc_acc=0.4082 | reproj_mean=NaN
+frame 031 | status=ok_no_valid_reprojection | matches=47 | assoc_acc=0.4043 | reproj_mean=NaN
+frame 032 | status=ok_no_valid_reprojection | matches=51 | assoc_acc=0.3725 | reproj_mean=NaN
+frame 033 | status=ok_no_valid_reprojection | matches=51 | assoc_acc=0.3725 | reproj_mean=NaN
+frame 034 | status=ok_no_valid_reprojection | matches=50 | assoc_acc=0.3400 | reproj_mean=NaN
+frame 035 | status=ok | matches=49 | assoc_acc=0.2857 | reproj_mean=226.008999 px
+frame 036 | status=ok | matches=48 | assoc_acc=0.2917 | reproj_mean=240.590992 px
+frame 037 | status=ok | matches=47 | assoc_acc=0.2979 | reproj_mean=228.074186 px
+frame 038 | status=ok_no_valid_reprojection | matches=44 | assoc_acc=0.2500 | reproj_mean=NaN
+frame 039 | status=ok_no_valid_reprojection | matches=45 | assoc_acc=0.2444 | reproj_mean=NaN
+frame 040 | status=ok_no_valid_reprojection | matches=43 | assoc_acc=0.2093 | reproj_mean=NaN
+frame 041 | status=ok_no_valid_reprojection | matches=41 | assoc_acc=0.2195 | reproj_mean=NaN
+frame 042 | status=ok_no_valid_reprojection | matches=40 | assoc_acc=0.2250 | reproj_mean=NaN
+frame 043 | status=ok_no_valid_reprojection | matches=39 | assoc_acc=0.1795 | reproj_mean=NaN
+frame 044 | status=ok | matches=40 | assoc_acc=0.1750 | reproj_mean=297.549110 px
+frame 045 | status=ok | matches=40 | assoc_acc=0.1750 | reproj_mean=278.148090 px
+frame 046 | status=ok_no_valid_reprojection | matches=40 | assoc_acc=0.1500 | reproj_mean=NaN
+frame 047 | status=ok_no_valid_reprojection | matches=37 | assoc_acc=0.1351 | reproj_mean=NaN
+frame 048 | status=ok | matches=33 | assoc_acc=0.0909 | reproj_mean=232.421226 px
+frame 049 | status=ok | matches=30 | assoc_acc=0.0333 | reproj_mean=290.210248 px
+frame 050 | status=ok | matches=31 | assoc_acc=0.0323 | reproj_mean=294.229175 px
+frame 051 | status=ok | matches=27 | assoc_acc=0.0370 | reproj_mean=193.043065 px
+frame 052 | status=ok | matches=26 | assoc_acc=0.0385 | reproj_mean=152.219780 px
+frame 053 | status=ok_no_valid_reprojection | matches=28 | assoc_acc=0.0357 | reproj_mean=NaN
+frame 054 | status=ok | matches=29 | assoc_acc=0.0345 | reproj_mean=132.080486 px
+frame 055 | status=ok | matches=34 | assoc_acc=0.0294 | reproj_mean=178.981433 px
+frame 056 | status=ok_no_valid_reprojection | matches=37 | assoc_acc=0.0000 | reproj_mean=NaN
+frame 057 | status=ok | matches=37 | assoc_acc=0.0000 | reproj_mean=204.687077 px
+frame 058 | status=ok | matches=37 | assoc_acc=0.0000 | reproj_mean=214.742147 px
+frame 059 | status=ok | matches=34 | assoc_acc=0.0000 | reproj_mean=200.573358 px
+frame 060 | status=ok | matches=32 | assoc_acc=0.0000 | reproj_mean=217.976396 px
+frame 061 | status=ok | matches=31 | assoc_acc=0.0000 | reproj_mean=212.996472 px
+frame 062 | status=ok | matches=29 | assoc_acc=0.0000 | reproj_mean=218.916785 px
+frame 063 | status=ok | matches=27 | assoc_acc=0.0000 | reproj_mean=234.313271 px
+frame 064 | status=ok | matches=25 | assoc_acc=0.0000 | reproj_mean=203.735989 px
+frame 065 | status=ok | matches=23 | assoc_acc=0.0000 | reproj_mean=213.091100 px
+frame 066 | status=ok | matches=22 | assoc_acc=0.0000 | reproj_mean=215.051311 px
+frame 067 | status=ok | matches=21 | assoc_acc=0.0000 | reproj_mean=219.819060 px
+frame 068 | status=ok | matches=19 | assoc_acc=0.0000 | reproj_mean=214.824468 px
+frame 069 | status=ok_no_valid_reprojection | matches=14 | assoc_acc=0.0000 | reproj_mean=NaN
+frame 070 | status=ok | matches=12 | assoc_acc=0.0000 | reproj_mean=142.716073 px
+frame 071 | status=ok | matches=13 | assoc_acc=0.0000 | reproj_mean=219.270476 px
+frame 072 | status=ok_no_valid_reprojection | matches=12 | assoc_acc=0.0000 | reproj_mean=NaN
+frame 073 | status=ok | matches=19 | assoc_acc=0.0000 | reproj_mean=256.058732 px
+frame 074 | status=ok | matches=23 | assoc_acc=0.0000 | reproj_mean=345.786389 px
+frame 075 | status=ok | matches=26 | assoc_acc=0.0000 | reproj_mean=219.906902 px
+frame 076 | status=ok | matches=27 | assoc_acc=0.0370 | reproj_mean=160.988026 px
+frame 077 | status=ok | matches=32 | assoc_acc=0.1562 | reproj_mean=432.872892 px
+frame 078 | status=ok | matches=42 | assoc_acc=0.4762 | reproj_mean=210.383730 px
+frame 079 | status=ok | matches=45 | assoc_acc=0.5111 | reproj_mean=192.024770 px
+frame 080 | status=ok | matches=49 | assoc_acc=0.3673 | reproj_mean=624.811293 px
+frame 081 | status=ok_no_valid_reprojection | matches=48 | assoc_acc=0.2708 | reproj_mean=NaN
+frame 082 | status=ok_no_valid_reprojection | matches=46 | assoc_acc=0.3261 | reproj_mean=NaN
+frame 083 | status=ok | matches=49 | assoc_acc=0.3061 | reproj_mean=284.382638 px
+frame 084 | status=ok | matches=54 | assoc_acc=0.2963 | reproj_mean=219.432515 px
+frame 085 | status=ok | matches=53 | assoc_acc=0.3396 | reproj_mean=218.594607 px
+frame 086 | status=ok_no_valid_reprojection | matches=54 | assoc_acc=0.3889 | reproj_mean=NaN
+frame 087 | status=ok_no_valid_reprojection | matches=53 | assoc_acc=0.4340 | reproj_mean=NaN
+frame 088 | status=ok_no_valid_reprojection | matches=54 | assoc_acc=0.4630 | reproj_mean=NaN
+frame 089 | status=ok_no_valid_reprojection | matches=57 | assoc_acc=0.4912 | reproj_mean=NaN
+frame 090 | status=ok_no_valid_reprojection | matches=57 | assoc_acc=0.5088 | reproj_mean=NaN
+frame 091 | status=ok_no_valid_reprojection | matches=60 | assoc_acc=0.5000 | reproj_mean=NaN
+frame 092 | status=ok | matches=60 | assoc_acc=0.5333 | reproj_mean=512.471684 px
+frame 093 | status=ok | matches=54 | assoc_acc=0.5370 | reproj_mean=239.101274 px
+frame 094 | status=ok | matches=53 | assoc_acc=0.5849 | reproj_mean=294.147818 px
+frame 095 | status=ok_no_valid_reprojection | matches=54 | assoc_acc=0.6481 | reproj_mean=NaN
+frame 096 | status=ok_no_valid_reprojection | matches=59 | assoc_acc=0.6780 | reproj_mean=NaN
+frame 097 | status=ok_no_valid_reprojection | matches=60 | assoc_acc=0.7167 | reproj_mean=NaN
+frame 098 | status=ok_no_valid_reprojection | matches=63 | assoc_acc=0.7460 | reproj_mean=NaN
+frame 099 | status=ok_no_valid_reprojection | matches=67 | assoc_acc=0.7612 | reproj_mean=NaN
+frame 100 | status=ok_no_valid_reprojection | matches=72 | assoc_acc=0.7917 | reproj_mean=NaN
+frame 101 | status=ok_no_valid_reprojection | matches=77 | assoc_acc=0.8182 | reproj_mean=NaN
+frame 102 | status=ok_no_valid_reprojection | matches=78 | assoc_acc=0.8205 | reproj_mean=NaN
+frame 103 | status=ok | matches=77 | assoc_acc=0.8701 | reproj_mean=142.777188 px
+frame 104 | status=ok | matches=77 | assoc_acc=0.9091 | reproj_mean=72.328105 px
+frame 105 | status=ok | matches=76 | assoc_acc=0.8816 | reproj_mean=90.283697 px
+frame 106 | status=ok | matches=73 | assoc_acc=0.8767 | reproj_mean=82.980484 px
+frame 107 | status=ok | matches=73 | assoc_acc=0.8356 | reproj_mean=88.052421 px
+frame 108 | status=ok | matches=74 | assoc_acc=0.8108 | reproj_mean=96.315223 px
+frame 109 | status=ok | matches=75 | assoc_acc=0.8000 | reproj_mean=99.269441 px
+frame 110 | status=ok | matches=71 | assoc_acc=0.7324 | reproj_mean=101.677583 px
+frame 111 | status=ok | matches=71 | assoc_acc=0.7042 | reproj_mean=106.537245 px
+frame 112 | status=ok | matches=62 | assoc_acc=0.3387 | reproj_mean=130.560911 px
+frame 113 | status=ok_no_valid_reprojection | matches=51 | assoc_acc=0.1569 | reproj_mean=NaN
+frame 114 | status=ok | matches=45 | assoc_acc=0.0000 | reproj_mean=232.886720 px
+frame 115 | status=ok | matches=47 | assoc_acc=0.0000 | reproj_mean=239.642702 px
+frame 116 | status=ok_no_valid_reprojection | matches=44 | assoc_acc=0.0000 | reproj_mean=NaN
+frame 117 | status=ok_no_valid_reprojection | matches=42 | assoc_acc=0.0000 | reproj_mean=NaN
+frame 118 | status=ok_no_valid_reprojection | matches=43 | assoc_acc=0.0000 | reproj_mean=NaN
+frame 119 | status=ok | matches=39 | assoc_acc=0.0000 | reproj_mean=315.360125 px
+frame 120 | status=ok | matches=40 | assoc_acc=0.0000 | reproj_mean=237.219259 px
+
+Processed frames: 121
+Successful frames: 71
+Frames with pose estimates from DLT: 69
+Average associations on tracked frames: 50.24
+Average reprojection error over valid tracked frames: 224.537246 px
+Saved full VO results to results/vo_full_results.mat
+=== FULL PIPELINE COMPLETED ===
