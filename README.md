@@ -1,4 +1,4 @@
-# Visual Odometry — Probabilistic Robotics Project
+# Visual Odometry: Probabilistic Robotics Project
 
 Visual odometry pipeline in Octave. Given a sequence of image measurements with feature descriptors and camera calibration, the system estimates the camera trajectory and builds a sparse 3D map.
 
