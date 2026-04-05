@@ -1,0 +1,33 @@
+=== LOADERS TEST ===
+
+[camera]
+K size: 3 x 3
+cam_transform size: 4 x 4
+z_near: 0.000
+z_far: 5.000
+width: 640
+height: 480
+
+[trajectory]
+num poses: 121
+odom_pose size: 121 x 3
+gt_pose size: 121 x 3
+
+[world]
+num landmarks: 1000
+position size: 1000 x 3
+appearance size: 1000 x 10
+
+[measurement 0]
+seq: 0
+gt_pose size: 1 x 3
+odom_pose size: 1 x 3
+num observed points: 127
+uv size: 127 x 2
+appearance size: 127 x 10
+
+[measurement 1]
+seq: 1
+num observed points: 124
+
+All loader checks passed.
