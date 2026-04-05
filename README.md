@@ -11,11 +11,11 @@ The pipeline takes the provided dataset (camera intrinsics, image measurements w
 3. Triangulates new landmarks along the way to keep the active set fresh
 4. Refines each pose by minimizing reprojection error
 
-Data association is done by exhaustive comparison of the 10-dimensional appearance descriptors — not efficient, but reliable enough for this dataset.
+Data association is done by exhaustive comparison of the 10, dimensional appearance descriptors, not efficient, but reliable enough for this dataset.
 
 ## What actually made it work
 
-The main thing that improved results was switching from matching against the full accumulated map to using a **local active cloud** — basically a sliding window of recently triangulated points. Matching against the whole map was drifting too much; keeping it local made tracking way more stable.
+The main thing that improved results was switching from matching against the full accumulated map to using a **local active cloud**: basically a sliding window of recently triangulated points. Matching against the whole map was drifting too much; keeping it local made tracking way more stable.
 
 Each pose is also refined with a least-squares step on the reprojection error, and there's a robust initialization to filter out bad correspondences before refinement.
 
@@ -23,10 +23,10 @@ Each pose is also refined with a least-squares step on the reprojection error, a
 
 The provided dataset contains:
 
-- `camera.dat` — camera intrinsics (camera matrix, near/far planes, image size)
-- `meas-XXXX.dat` — per-frame measurements: point IDs, image coordinates [col, row], and 10D appearance vectors
-- `trajectory.dat` — ground truth poses (used only for evaluation)
-- `world.dat` — ground truth 3D landmarks (used only for evaluation)
+- `camera.dat`: camera intrinsics (camera matrix, near/far planes, image size)
+- `meas-XXXX.dat`: per-frame measurements: point IDs, image coordinates [col, row], and 10D appearance vectors
+- `trajectory.dat`: ground truth poses (used only for evaluation)
+- `world.dat`: ground truth 3D landmarks (used only for evaluation)
 
 ## How to run
 
