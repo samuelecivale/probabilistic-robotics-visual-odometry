@@ -1,0 +1,36 @@
+=== APPEARANCE MATCHING TEST ===
+Frame 0 points: 127
+Frame 1 points: 124
+
+[Nearest Neighbor]
+num matches: 127
+correct matches: 115 / 127
+accuracy: 0.9055
+mean descriptor distance: 0.120011
+median descriptor distance: 0.000000
+
+[Mutual Nearest Neighbor]
+num matches: 115
+correct matches: 115 / 115
+accuracy: 1.0000
+mean descriptor distance: 0.000000
+median descriptor distance: 0.000000
+
+[GT overlap]
+common landmark ids between frames: 115
+
+Plot saving skipped: print: rendering with fltk toolkit requires visible figure (DISPLAY=':0')
+
+[First 10 mutual matches]
+  meas0 row 1 (id=6) <-> meas1 row 1 (id=6), dist=0.000000
+  meas0 row 2 (id=14) <-> meas1 row 2 (id=14), dist=0.000000
+  meas0 row 3 (id=15) <-> meas1 row 3 (id=15), dist=0.000000
+  meas0 row 4 (id=17) <-> meas1 row 4 (id=17), dist=0.000000
+  meas0 row 5 (id=35) <-> meas1 row 5 (id=35), dist=0.000000
+  meas0 row 6 (id=36) <-> meas1 row 6 (id=36), dist=0.000000
+  meas0 row 7 (id=38) <-> meas1 row 7 (id=38), dist=0.000000
+  meas0 row 8 (id=42) <-> meas1 row 8 (id=42), dist=0.000000
+  meas0 row 9 (id=44) <-> meas1 row 9 (id=44), dist=0.000000
+  meas0 row 10 (id=53) <-> meas1 row 11 (id=53), dist=0.000000
+
+=== MATCHING TEST COMPLETED ===
