@@ -34,21 +34,16 @@ function [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_c
         pc_prev = T_prev * Xh;
         pc_curr = T_curr * Xh;
 
-        if pc_prev(3) <= camera.z_near || pc_curr(3) <= camera.z_near
+        if pc_prev(3) <= 1e-8 || pc_curr(3) <= 1e-8
             continue;
         end
 
-        [uv_prev_proj, valid_prev] = project_point(camera.K, T_prev, pw, ...
-            camera.width, camera.height, camera.z_near, 1e9);
-        [uv_curr_proj, valid_curr] = project_point(camera.K, T_curr, pw, ...
-            camera.width, camera.height, camera.z_near, 1e9);
+        [~, ~, err_prev, valid_prev] = reprojection_errors_pose(camera.K, T_prev, pw, uv_prev, 1e-8);
+        [~, ~, err_curr, valid_curr] = reprojection_errors_pose(camera.K, T_curr, pw, uv_curr, 1e-8);
 
         if ~(valid_prev && valid_curr)
             continue;
         end
-
-        err_prev = norm(uv_prev_proj(:) - uv_prev(:));
-        err_curr = norm(uv_curr_proj(:) - uv_curr(:));
 
         if err_prev > max_reproj_err || err_curr > max_reproj_err
             continue;
@@ -65,4 +60,3 @@ function [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_c
     stats.candidate_matches = candidate_count;
     stats.added_points = added;
 end
-
