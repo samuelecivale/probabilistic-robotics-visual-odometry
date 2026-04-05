@@ -1,0 +1,16 @@
+=== PROJECTION SANITY CHECK ===
+Observed landmarks used for check: 127
+
+Interpretation A:
+  valid projections: 127 / 127
+  mean reprojection error: 0.0004 px
+  median reprojection error: 0.0004 px
+
+Interpretation B:
+  valid projections: 16 / 127
+  mean reprojection error: 212.7458 px
+  median reprojection error: 205.4412 px
+
+Best interpretation: A (use camera.cam_transform directly)
+
+Saved plot to results/projection_sanity_check_frame0.png
