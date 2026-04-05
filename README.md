@@ -42,12 +42,58 @@ First script produces `results/vo_active_results.mat`, second one produces `resu
 
 ## Evaluation
 
-Following the project guidelines, evaluation is done on relative poses:
+For each consecutive pair of estimated poses \(T_i, T_{i+1}\), I compute the relative motion and compare it with the corresponding relative ground-truth motion.
 
-- For each consecutive pair (T_i, T_{i+1}), compute relative motion and compare with relative GT motion
-- Rotation error: trace(I - error_R) where error_R comes from inv(rel_T) * rel_GT
-- Translation: since the estimate is up to scale, compute the ratio norm(rel_t) / norm(rel_gt) and check consistency
-- Map: scale the estimated map using the median scale ratio, then compute RMSE against GT landmarks
+The estimated relative motion is:
+\[
+T_{\mathrm{rel}} = T_i^{-1} T_{i+1}
+\]
+
+The ground-truth relative motion is:
+\[
+T_{\mathrm{rel}}^{\mathrm{GT}} = (T_i^{\mathrm{GT}})^{-1} T_{i+1}^{\mathrm{GT}}
+\]
+
+The relative error transformation is:
+\[
+T_{\mathrm{err}} = T_{\mathrm{rel}}^{-1} T_{\mathrm{rel}}^{\mathrm{GT}}
+\]
+
+### Rotation error
+
+The rotation error is computed as:
+\[
+e_R = \operatorname{trace}\!\left(I - R_{\mathrm{err}}\right)
+\]
+where \(R_{\mathrm{err}}\) is the rotational part of \(T_{\mathrm{err}}\).
+
+### Translation scale consistency
+
+Since the estimated trajectory is only defined up to scale, I evaluate the translation through the ratio:
+\[
+r_t = \frac{\|t_{\mathrm{rel}}\|}{\|t_{\mathrm{rel}}^{\mathrm{GT}}\|}
+\]
+
+I then check how consistent this ratio remains over the whole sequence.
+
+### Map evaluation
+
+The estimated map is scaled using the inverse of the median translation ratio:
+\[
+s = \frac{1}{\operatorname{median}(r_t)}
+\]
+
+The corrected map is then:
+\[
+p_i^{\mathrm{corr}} = s \, p_i
+\]
+
+Finally, I compute the RMSE between the corrected estimated landmarks and the corresponding ground-truth landmarks:
+\[
+\mathrm{RMSE}_{\mathrm{map}} =
+\sqrt{\frac{1}{N}\sum_{i=1}^{N}
+\left\|p_i^{\mathrm{corr}} - p_i^{\mathrm{GT}}\right\|^2}
+\]
 
 ## Numerical results
 
