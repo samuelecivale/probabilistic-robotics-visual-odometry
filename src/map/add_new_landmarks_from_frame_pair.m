@@ -1,8 +1,22 @@
-function [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_curr, T_prev, T_curr, camera, max_desc_dist, max_reproj_err)
+function [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_curr, T_prev, T_curr, camera, max_desc_dist, max_reproj_err, matched_curr_idx)
+    if nargin < 9
+        matched_curr_idx = [];
+    end
+
     P_prev = camera.K * T_prev(1:3, :);
     P_curr = camera.K * T_curr(1:3, :);
 
     pair_matches = match_by_appearance_mutual_threshold(meas_prev.appearance, meas_curr.appearance, max_desc_dist);
+
+    if ~isempty(matched_curr_idx)
+        unmatched_curr = true(size(meas_curr.appearance, 1), 1);
+        unmatched_curr(matched_curr_idx) = false;
+
+        keep = unmatched_curr(pair_matches.idx2);
+        pair_matches.idx1 = pair_matches.idx1(keep);
+        pair_matches.idx2 = pair_matches.idx2(keep);
+        pair_matches.dist = pair_matches.dist(keep);
+    end
 
     added = 0;
     candidate_count = numel(pair_matches.idx1);
@@ -10,21 +24,6 @@ function [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_c
     for k = 1:candidate_count
         i_prev = pair_matches.idx1(k);
         i_curr = pair_matches.idx2(k);
-
-        desc = meas_curr.appearance(i_curr, :);
-
-        % skip if descriptor already exists in map
-        already_in_map = false;
-        for m = 1:size(map.desc, 1)
-            if appearance_distance(map.desc(m, :), desc) <= max_desc_dist
-                already_in_map = true;
-                break;
-            end
-        end
-
-        if already_in_map
-            continue;
-        end
 
         uv_prev = meas_prev.uv(i_prev, :);
         uv_curr = meas_curr.uv(i_curr, :);
@@ -56,7 +55,7 @@ function [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_c
         end
 
         map.points(end+1, :) = pw;
-        map.desc(end+1, :) = desc;
+        map.desc(end+1, :) = meas_curr.appearance(i_curr, :);
         map.obs_count(end+1, 1) = 2;
 
         added = added + 1;
@@ -66,3 +65,4 @@ function [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_c
     stats.candidate_matches = candidate_count;
     stats.added_points = added;
 end
+

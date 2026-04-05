@@ -4,29 +4,24 @@ function matches = match_by_appearance_nn(desc1, desc2)
     n1 = size(desc1, 1);
     n2 = size(desc2, 1);
 
-    idx1 = zeros(n1, 1);
-    idx2 = zeros(n1, 1);
-    dist = zeros(n1, 1);
+    matches = struct();
+    matches.idx1 = zeros(0,1);
+    matches.idx2 = zeros(0,1);
+    matches.dist = zeros(0,1);
 
-    for i = 1:n1
-        best_j = 0;
-        best_d = inf;
-
-        for j = 1:n2
-            d = appearance_distance(desc1(i, :), desc2(j, :));
-            if d < best_d
-                best_d = d;
-                best_j = j;
-            end
-        end
-
-        idx1(i) = i;
-        idx2(i) = best_j;
-        dist(i) = best_d;
+    if n1 == 0 || n2 == 0
+        return;
     end
 
-    matches = struct();
-    matches.idx1 = idx1;
-    matches.idx2 = idx2;
-    matches.dist = dist;
+    s1 = sum(desc1.^2, 2);
+    s2 = sum(desc2.^2, 2);
+
+    D2 = bsxfun(@plus, s1, s2.') - 2 * (desc1 * desc2.');
+    D2(D2 < 0) = 0;
+
+    [best_d2, best_j] = min(D2, [], 2);
+
+    matches.idx1 = (1:n1).';
+    matches.idx2 = best_j;
+    matches.dist = sqrt(best_d2);
 end

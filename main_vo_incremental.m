@@ -10,8 +10,11 @@ traj   = load_trajectory(fullfile('data', 'trajectory.dat'));
 max_desc_dist = 1e-8;
 max_reproj_err_add = 2.0;
 
-meas0 = load_measurement(fullfile('data', 'meas-00000.dat'));
-meas1 = load_measurement(fullfile('data', 'meas-00001.dat'));
+num_frames = numel(traj.pose_id);
+measurements = load_measurement_sequence('data', num_frames);
+
+meas0 = measurements{1};
+meas1 = measurements{2};
 
 [map, init] = build_initial_map_struct(camera, meas0, meas1);
 
@@ -19,23 +22,18 @@ fprintf('=== INCREMENTAL VISUAL ODOMETRY ===\n');
 fprintf('Initial map points: %d\n', size(map.points, 1));
 fprintf('Descriptor threshold: %.1e\n', max_desc_dist);
 
-num_frames = numel(traj.pose_id);
-
 T_est_all = NaN(4, 4, num_frames);
 assoc_count = zeros(num_frames, 1);
-assoc_accuracy = NaN(num_frames, 1);
 reproj_mean = NaN(num_frames, 1);
 map_size = zeros(num_frames, 1);
 added_points = zeros(num_frames, 1);
 frame_status = cell(num_frames, 1);
 
-% frame 0
 T_est_all(:, :, 1) = eye(4);
 assoc_count(1) = size(map.points, 1);
 map_size(1) = size(map.points, 1);
 frame_status{1} = 'init_identity';
 
-% frame 1
 T_10 = eye(4);
 T_10(1:3,1:3) = init.R01;
 T_10(1:3,4) = init.t01(:);
@@ -47,11 +45,9 @@ frame_status{2} = 'init_two_view';
 fprintf('frame %03d | status=%s | map=%d\n', 0, frame_status{1}, map_size(1));
 fprintf('frame %03d | status=%s | map=%d\n', 1, frame_status{2}, map_size(2));
 
-meas_prev = meas1;
-
 for k = 3:num_frames
-    meas_file = fullfile('data', sprintf('meas-%05d.dat', k-1));
-    meas_curr = load_measurement(meas_file);
+    meas_prev = measurements{k-1};
+    meas_curr = measurements{k};
 
     assoc = match_by_appearance_mutual_threshold(map.desc, meas_curr.appearance, max_desc_dist);
     assoc_count(k) = numel(assoc.idx1);
@@ -59,9 +55,11 @@ for k = 3:num_frames
     if assoc_count(k) < 6
         frame_status{k} = 'too_few_matches';
         map_size(k) = size(map.points, 1);
-        fprintf('frame %03d | status=%s | matches=%d | map=%d\n', ...
-            k-1, frame_status{k}, assoc_count(k), map_size(k));
-        meas_prev = meas_curr;
+
+        if k <= 10 || mod(k-1, 5) == 0 || k == num_frames
+            fprintf('frame %03d | status=%s | matches=%d | map=%d\n', ...
+                k-1, frame_status{k}, assoc_count(k), map_size(k));
+        end
         continue;
     end
 
@@ -82,26 +80,19 @@ for k = 3:num_frames
         reproj_mean(k) = mean(err);
     end
 
-    % debug only
-    % evaluate how many matches are actually correct using GT ids
-    % this is not used by the pipeline logic
-    correct = (meas_curr.point_id(assoc.idx2) == meas_curr.point_id(assoc.idx2)); % placeholder
-    assoc_accuracy(k) = NaN; %#ok<NASGU>
-
-    % map expansion using previous and current frame
     T_prev = T_est_all(:, :, k-1);
     if all(~isnan(T_prev(:)))
         [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_curr, ...
-            T_prev, T_curr, camera, max_desc_dist, max_reproj_err_add);
+            T_prev, T_curr, camera, max_desc_dist, max_reproj_err_add, assoc.idx2);
         added_points(k) = stats.added_points;
     end
 
     map_size(k) = size(map.points, 1);
 
-    fprintf('frame %03d | status=%s | matches=%d | reproj_mean=%.6f px | added=%d | map=%d\n', ...
-        k-1, frame_status{k}, assoc_count(k), reproj_mean(k), added_points(k), map_size(k));
-
-    meas_prev = meas_curr;
+    if k <= 10 || mod(k-1, 5) == 0 || k == num_frames
+        fprintf('frame %03d | status=%s | matches=%d | reproj_mean=%.6f px | added=%d | map=%d\n', ...
+            k-1, frame_status{k}, assoc_count(k), reproj_mean(k), added_points(k), map_size(k));
+    end
 end
 
 num_ok = 0;

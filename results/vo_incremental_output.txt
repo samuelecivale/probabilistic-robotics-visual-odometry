@@ -1,0 +1,43 @@
+=== INCREMENTAL VISUAL ODOMETRY ===
+Initial map points: 115
+Descriptor threshold: 1.0e-08
+frame 000 | status=init_identity | map=115
+frame 001 | status=init_two_view | map=115
+frame 002 | status=ok | matches=108 | reproj_mean=0.000992 px | added=9 | map=124
+frame 003 | status=ok | matches=112 | reproj_mean=0.001884 px | added=6 | map=130
+frame 004 | status=ok | matches=99 | reproj_mean=0.002921 px | added=5 | map=135
+frame 005 | status=ok | matches=91 | reproj_mean=0.003592 px | added=5 | map=140
+frame 006 | status=ok | matches=89 | reproj_mean=0.004856 px | added=7 | map=147
+frame 007 | status=ok | matches=92 | reproj_mean=0.006921 px | added=5 | map=152
+frame 008 | status=ok | matches=85 | reproj_mean=0.009118 px | added=5 | map=157
+frame 009 | status=ok | matches=77 | reproj_mean=0.013162 px | added=14 | map=171
+frame 010 | status=ok | matches=81 | reproj_mean=0.016853 px | added=11 | map=182
+frame 011 | status=ok | matches=89 | reproj_mean=0.018462 px | added=9 | map=191
+frame 012 | status=ok | matches=96 | reproj_mean=0.023984 px | added=10 | map=201
+frame 013 | status=ok | matches=95 | reproj_mean=0.028796 px | added=5 | map=206
+frame 014 | status=ok | matches=92 | reproj_mean=0.039372 px | added=6 | map=212
+frame 015 | status=ok | matches=88 | reproj_mean=0.055749 px | added=8 | map=220
+frame 016 | status=ok | matches=88 | reproj_mean=0.062261 px | added=7 | map=227
+frame 017 | status=ok | matches=84 | reproj_mean=0.071403 px | added=6 | map=233
+frame 018 | status=ok | matches=79 | reproj_mean=0.091288 px | added=9 | map=242
+frame 019 | status=ok | matches=73 | reproj_mean=0.147692 px | added=3 | map=245
+frame 020 | status=ok | matches=66 | reproj_mean=0.396750 px | added=5 | map=250
+frame 021 | status=ok | matches=61 | reproj_mean=0.212856 px | added=5 | map=255
+frame 022 | status=ok | matches=56 | reproj_mean=0.507482 px | added=12 | map=267
+frame 023 | status=ok | matches=59 | reproj_mean=0.204316 px | added=10 | map=277
+frame 024 | status=ok | matches=65 | reproj_mean=0.219724 px | added=21 | map=298
+frame 025 | status=ok | matches=84 | reproj_mean=0.431499 px | added=2 | map=300
+frame 026 | status=ok | matches=84 | reproj_mean=0.739523 px | added=2 | map=302
+frame 027 | status=ok | matches=79 | reproj_mean=0.933688 px | added=2 | map=304
+frame 028 | status=ok | matches=80 | reproj_mean=1.461498 px | added=4 | map=308
+frame 029 | status=ok | matches=80 | reproj_mean=1.856638 px | added=3 | map=311
+frame 030 | status=ok | matches=78 | reproj_mean=1.282401 px | added=0 | map=311
+frame 031 | status=ok | matches=69 | reproj_mean=1.469469 px | added=5 | map=316
+frame 032 | status=ok | matches=71 | reproj_mean=1.901423 px | added=1 | map=317
+frame 033 | status=ok | matches=69 | reproj_mean=2.084891 px | added=8 | map=325
+frame 034 | status=ok | matches=72 | reproj_mean=2.013471 px | added=3 | map=328
+frame 035 | status=ok | matches=73 | reproj_mean=2.142391 px | added=5 | map=333
+frame 036 | status=ok | matches=74 | reproj_mean=1.825014 px | added=4 | map=337
+frame 037 | status=ok | matches=73 | reproj_mean=2.611053 px | added=4 | map=341
+frame 038 | status=ok | matches=71 | reproj_mean=4.778954 px | added=10 | map=351
+frame 039 | status=ok | matches=78 | reproj_mean=6.050309 px | added=5 | map=356
