@@ -1,0 +1,21 @@
+=== FRAME-TO-MAP POSE ESTIMATION TEST ===
+Initialized map points: 115
+Frame 2 associations: 108
+Association accuracy (debug with GT ids): 108 / 108 = 1.0000
+
+Estimated pose for frame 2 (camera wrt init map)
+   1.0000e+00   5.7614e-06   3.3666e-06
+  -5.7614e-06   1.0000e+00   6.0844e-07
+  -3.3666e-06  -6.0846e-07   1.0000e+00
+Estimated translation:
+   4.6926e-05  -1.7288e-06  -2.0000e+00
+
+Reprojection valid points: 108 / 108
+Mean reprojection error: 0.000992 px
+Median reprojection error: 0.000981 px
+
+GT comparison (debug only)
+Rotation trace error: 0.000000
+Translation direction dot product: 1.000000
+Saved frame 2 pose test to results/pose_test_frame2.mat
+=== POSE ESTIMATION TEST COMPLETED ===
