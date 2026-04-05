@@ -1,120 +1,98 @@
-# Probabilistic Robotics: Visual Odometry
+# Visual Odometry — Probabilistic Robotics Project
 
-A complete visual odometry pipeline that estimates camera motion from image measurements and incrementally reconstructs a sparse 3D map of the observed scene.
+Visual odometry pipeline in Octave. Given a sequence of image measurements with feature descriptors and camera calibration, the system estimates the camera trajectory and builds a sparse 3D map.
 
-Starting from the first two frames, the system initializes the relative pose, triangulates an initial point cloud, and then tracks the camera across the full sequence while progressively growing the map. The estimated trajectory and reconstruction are evaluated against ground truth.
+## What this does
 
----
+The pipeline takes the provided dataset (camera intrinsics, image measurements with appearance descriptors) and:
 
-## Goal
+1. Initializes from the first two frames — estimates the relative pose via Essential matrix decomposition and triangulates an initial set of 3D points
+2. Tracks the camera incrementally through the sequence using projective ICP (reprojecting known 3D points into the current frame and matching by appearance)
+3. Triangulates new landmarks along the way to keep the active set fresh
+4. Refines each pose by minimizing reprojection error
 
-Estimate the 6-DoF motion of a camera in 3D using only visual observations: image feature measurements, camera calibration parameters, and appearance descriptors of observed landmarks.
+Data association is done by exhaustive comparison of the 10-dimensional appearance descriptors — not efficient, but reliable enough for this dataset.
 
-The system is expected to initialize from a stereo pair, recover the full camera trajectory, triangulate a sparse map, and provide quantitative evaluation of both pose and reconstruction accuracy.
+## What actually made it work
 
----
+The main thing that improved results was switching from matching against the full accumulated map to using a **local active cloud** — basically a sliding window of recently triangulated points. Matching against the whole map was drifting too much; keeping it local made tracking way more stable.
 
-## Approach
+Each pose is also refined with a least-squares step on the reprojection error, and there's a robust initialization to filter out bad correspondences before refinement.
 
-The pipeline is built around four key ideas.
+## Dataset
 
-**Two-view initialization.**
-The first two frames provide the initial correspondences used to estimate a relative pose and triangulate the first set of 3D landmarks.
+The provided dataset contains:
 
-**Active-cloud tracking.**
-Rather than matching each new frame against the entire accumulated map, the system maintains a local set of recently triangulated points. This keeps the estimation stable and limits drift accumulation.
+- `camera.dat` — camera intrinsics (camera matrix, near/far planes, image size)
+- `meas-XXXX.dat` — per-frame measurements: point IDs, image coordinates [col, row], and 10D appearance vectors
+- `trajectory.dat` — ground truth poses (used only for evaluation)
+- `world.dat` — ground truth 3D landmarks (used only for evaluation)
 
-**Incremental map growth.**
-New landmarks are triangulated from consecutive frames and merged into the global map as the camera advances through the sequence.
-
-**Pose refinement.**
-Each pose estimate is refined by minimizing reprojection error over the observed landmarks, with a robust initialization step to handle incorrect correspondences.
-
----
-
-## Results
-
-| Metric | Value |
-|---|---|
-| Valid relative pose pairs | 120 / 120 |
-| Mean rotation trace error | 0.000000 |
-| Median rotation trace error | 0.000000 |
-| Mean scale ratio | 5.020486 |
-| Median scale ratio | 4.989554 |
-| Scale ratio std | 0.042870 |
-| Scale correction | 0.200419 |
-| RMSE position | **0.0439 m** |
-| Matched map landmarks | 410 |
-| Map RMSE | **0.1127 m** |
-
-### Trajectory
-
-| 3D trajectory | XY plane | Position error |
-|---|---|---|
-| ![3D](results/trajectory_3d.png) | ![XY](results/trajectory_xy.png) | ![Error](results/position_error_vs_frame.png) |
-
-### Motion analysis
-
-| Rotation error | Scale ratio | Components vs frame |
-|---|---|---|
-| ![Rot](results/rot_error.png) | ![Scale](results/scale_ratio.png) | ![Components](results/trajectory_components_vs_frame.png) |
-
-### Map reconstruction
-
-| 3D scatter | XY projection | XZ projection |
-|---|---|---|
-| ![3D map](results/map_scatter_3d.png) | ![XY map](results/map_xy.png) | ![XZ map](results/map_xz.png) |
-
----
-
-## Interpretation
-
-The strongest aspect of the system is the stability of motion estimation: rotation error is near zero, scale remains highly consistent across the entire sequence, and the final position RMSE is well below 5 cm. The reconstructed map aligns closely with ground truth after scale correction.
-
-The switch to an active-cloud tracking strategy — using a local window of recent landmarks instead of the full map — was the single most impactful design decision, significantly improving robustness and accuracy.
-
----
-
-## Limitations
-
-This project is a sparse incremental visual odometry pipeline, not a full SLAM system. It does not include loop closure, bundle adjustment, global optimization, or dense reconstruction. Results should be interpreted in the context of an open-loop, incremental estimator.
-
----
-
-## Repository Structure
-
-```
-.
-├── data/                        # Input dataset
-├── results/                     # Output trajectories, maps, and plots
-├── src/                         # Source modules
-├── main_vo_active.m             # Main VO pipeline
-├── main_evaluate_vo.m           # Evaluation against ground truth
-└── README.md
-```
-
----
-
-## How to Run
-
-**Run the visual odometry pipeline**
+## How to run
 
 ```bash
+# run the VO pipeline
 octave-cli --silent main_vo_active.m
-```
 
-Produces `results/vo_active_results.mat`.
-
-**Evaluate against ground truth**
-
-```bash
+# evaluate against ground truth
 octave-cli --silent main_evaluate_vo.m
 ```
 
-Produces `results/evaluation_results.mat` and all result plots shown above.
+First script produces `results/vo_active_results.mat`, second one produces `results/evaluation_results.mat` and all the plots.
 
----
+## Evaluation
 
-## Development Path
+Following the project guidelines, evaluation is done on relative poses:
 
-The project was developed incrementally: dataset inspection → geometric verification → appearance-based matching → two-view initialization → triangulation → incremental tracking → pose refinement → robust initialization → active-cloud tracking → final evaluation. Each component was validated independently before integration.
+- For each consecutive pair (T_i, T_{i+1}), compute relative motion and compare with relative GT motion
+- Rotation error: trace(I - error_R) where error_R comes from inv(rel_T) * rel_GT
+- Translation: since the estimate is up to scale, compute the ratio norm(rel_t) / norm(rel_gt) and check consistency
+- Map: scale the estimated map using the median scale ratio, then compute RMSE against GT landmarks
+
+## Numerical results
+
+```
+Valid relative pose pairs:    120 / 120
+Mean rotation trace error:    0.000000
+Median rotation trace error:  0.000000
+Mean scale ratio:             5.020486
+Median scale ratio:           4.989554
+Scale ratio std:              0.042870
+RMSE position:                0.0439 m
+Matched map landmarks:        410
+Map RMSE:                     0.1127 m
+```
+
+Rotation estimation is basically perfect, scale is very consistent across the sequence (std ~ 0.04), and position RMSE after scale correction is under 5 cm. The map aligns reasonably well with GT.
+
+## Plots
+
+### Trajectory
+| | | |
+|---|---|---|
+| ![](results/trajectory_3d.png) | ![](results/trajectory_xy.png) | ![](results/position_error_vs_frame.png) |
+| 3D trajectory | XY plane | Position error per frame |
+
+### Rotation and scale
+| | |
+|---|---|
+| ![](results/rot_error.png) | ![](results/scale_ratio.png) |
+| Rotation trace error | Scale ratio over sequence |
+
+### Map
+| | | |
+|---|---|---|
+| ![](results/map_scatter_3d.png) | ![](results/map_xy.png) | ![](results/map_xz.png) |
+| 3D reconstruction | XY view | XZ view |
+
+## Repo structure
+
+```
+.
+├── data/                    # dataset
+├── results/                 # output .mat files and plots
+├── src/                     # source code
+├── main_vo_active.m         # main pipeline
+├── main_evaluate_vo.m       # evaluation script
+└── README.md
+```
