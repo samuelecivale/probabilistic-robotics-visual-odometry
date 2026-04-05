@@ -1,6 +1,9 @@
-function [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_curr, T_prev, T_curr, camera, max_desc_dist, max_reproj_err, matched_curr_idx)
+function [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_curr, T_prev, T_curr, camera, max_desc_dist, max_reproj_err, matched_curr_idx, current_frame)
     if nargin < 9
         matched_curr_idx = [];
+    end
+    if nargin < 10
+        current_frame = 0;
     end
 
     P_prev = camera.K * T_prev(1:3, :);
@@ -52,6 +55,8 @@ function [map, stats] = add_new_landmarks_from_frame_pair(map, meas_prev, meas_c
         map.points(end+1, :) = pw;
         map.desc(end+1, :) = meas_curr.appearance(i_curr, :);
         map.obs_count(end+1, 1) = 2;
+        map.created_frame(end+1, 1) = current_frame;
+        map.last_seen(end+1, 1) = current_frame;
 
         added = added + 1;
     end

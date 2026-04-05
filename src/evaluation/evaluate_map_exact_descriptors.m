@@ -11,11 +11,10 @@ function eval_map = evaluate_map_exact_descriptors(map, world, T_wc0_gt, scale_c
 
     for i = 1:size(map.points, 1)
         d = map.desc(i, :);
-        found = false;
 
         for j = 1:size(world.appearance, 1)
             if all(abs(d - world.appearance(j, :)) <= desc_tol)
-                Xw = [world.position(j, :), 1].';
+                Xw = [world.position(j, :) 1].';
                 Xc0 = T_c0w_gt * Xw;
 
                 p_est = scale_correction * map.points(i, :);
@@ -24,14 +23,8 @@ function eval_map = evaluate_map_exact_descriptors(map, world, T_wc0_gt, scale_c
                 matched_est(end+1, :) = p_est;
                 matched_gt(end+1, :) = p_gt;
                 errors(end+1, 1) = norm(p_est - p_gt);
-
-                found = true;
                 break;
             end
-        end
-
-        if ~found
-            continue;
         end
     end
 

@@ -1,0 +1,12 @@
+=== VISUAL ODOMETRY EVALUATION ===
+Loaded results from results/vo_active_results.mat
+
+[Trajectory evaluation]
+Valid relative pairs: 120 / 120
+Mean rotation trace error: 0.000000
+Median rotation trace error: 0.000000
+Mean scale ratio: 5.020486
+Median scale ratio: 4.989554
+Std scale ratio: 0.042870
+Scale correction used: 0.200419
+RMSE position: 0.043935 m
