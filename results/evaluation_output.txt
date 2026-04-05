@@ -10,3 +10,12 @@ Median scale ratio: 4.989554
 Std scale ratio: 0.042870
 Scale correction used: 0.200419
 RMSE position: 0.043935 m
+
+[Map evaluation]
+Matched map landmarks: 410
+Map RMSE: 0.112674 m
+Mean map error: 0.083131 m
+Median map error: 0.063149 m
+
+Saved evaluation data to results/evaluation_results.mat
+=== EVALUATION COMPLETED ===
