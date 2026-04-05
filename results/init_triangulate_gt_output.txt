@@ -1,0 +1,12 @@
+=== INITIAL TRIANGULATION WITH GT POSES ===
+Mutual matches: 115
+Cheirality-valid points: 115 / 115
+Triangulated valid points: 115
+Map RMSE against GT: 0.000381 m
+Mean point error: 0.000207 m
+Median point error: 0.000106 m
+Reprojection valid points: 115
+Frame 0 mean reprojection error: 0.000158 px
+Frame 1 mean reprojection error: 0.000170 px
+Saved initialization state to results/init_state_gt.mat
+=== TRIANGULATION TEST COMPLETED ===
