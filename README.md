@@ -6,7 +6,7 @@ Visual odometry pipeline in Octave. Given a sequence of image measurements with 
 
 The pipeline takes the provided dataset (camera intrinsics, image measurements with appearance descriptors) and:
 
-1. Initializes from the first two frames — estimates the relative pose via Essential matrix decomposition and triangulates an initial set of 3D points
+1. Initializes from the first two frames, estimates the relative pose via Essential matrix decomposition and triangulates an initial set of 3D points
 2. Tracks the camera incrementally through the sequence using projective ICP (reprojecting known 3D points into the current frame and matching by appearance)
 3. Triangulates new landmarks along the way to keep the active set fresh
 4. Refines each pose by minimizing reprojection error
