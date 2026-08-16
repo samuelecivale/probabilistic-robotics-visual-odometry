@@ -1,421 +1,395 @@
-# Monocular Visual Odometry
+# Visual Odometry from Scratch — Active-Cloud Projective ICP
 
-A geometric **monocular visual odometry** pipeline for camera pose estimation and sparse 3D reconstruction.
+![GNU Octave](https://img.shields.io/badge/GNU%20Octave-Visual%20Odometry-blue)
+![Python](https://img.shields.io/badge/Python-Evaluation%20%26%20Plots-yellow)
+![Robotics](https://img.shields.io/badge/Robotics-State%20Estimation-green)
+![Computer Vision](https://img.shields.io/badge/Computer%20Vision-Multi--View%20Geometry-purple)
 
-The project implements the main components of a classical feature-based visual odometry system, including:
+A **monocular visual odometry pipeline** implemented in GNU Octave that estimates camera motion and reconstructs a sparse 3D map from image measurements and appearance descriptors.
 
-* relative-pose initialization;
-* essential-matrix geometry;
-* triangulation;
-* landmark association;
-* local-map management;
-* camera pose refinement through reprojection error.
+The project implements the main geometric estimation components explicitly: **Essential Matrix estimation, triangulation, RANSAC-based camera pose estimation, SE(3) pose refinement, reprojection-error minimization and incremental sparse mapping**.
 
-## Key Results
-
-| Metric               |        Result |
-| -------------------- | ------------: |
-| Valid relative poses | **120 / 120** |
-| Position RMSE        |   **4.39 cm** |
-| Map RMSE             |  **11.27 cm** |
-
-The pipeline successfully estimated a valid relative camera pose for **all 120 evaluated frame transitions**.
+The key design choice is an **active local 3D cloud**: instead of continuously tracking against the entire accumulated map, the odometry system estimates motion primarily from recently triangulated landmarks, using the global map only as a fallback.
 
 ---
 
-## Overview
+## Results
 
-Visual odometry estimates the motion of a camera from a sequence of images.
+| Metric                         |        Result |
+| ------------------------------ | ------------: |
+| Valid relative pose pairs      | **120 / 120** |
+| Position RMSE                  |  **0.0439 m** |
+| Mean rotation trace error      |       **≈ 0** |
+| Median scale ratio             |    **4.9896** |
+| Scale-ratio standard deviation |    **0.0429** |
+| Matched map landmarks          |       **410** |
+| Map RMSE                       |  **0.1127 m** |
 
-The objective of this project is to reconstruct both:
+The estimated monocular trajectory is recovered consistently up to the expected global scale ambiguity.
 
-1. the **camera trajectory**;
-2. a sparse representation of the observed **3D environment**.
+### Estimated vs Ground-Truth Trajectory
 
-The implemented pipeline follows a classical geometry-based approach rather than an end-to-end learned model.
+<p align="center">
+  <img src="results/trajectory_3d.png" width="49%" alt="3D camera trajectory">
+  <img src="results/trajectory_xy.png" width="49%" alt="XY camera trajectory">
+</p>
 
-```text
-Image Sequence
-      │
-      ▼
-Feature Correspondences
-      │
-      ▼
-Geometric Initialization
-      │
-      ▼
-Essential Matrix
-      │
-      ▼
-Relative Camera Pose
-      │
-      ▼
-Triangulation
-      │
-      ▼
-Local 3D Map
-      │
-      ▼
-Data Association
-      │
-      ▼
-Pose Refinement
-      │
-      ▼
-Estimated Trajectory + Map
-```
+### Position Error and Scale Consistency
+
+<p align="center">
+  <img src="results/position_error_vs_frame.png" width="49%" alt="Position error">
+  <img src="results/scale_ratio.png" width="49%" alt="Scale ratio">
+</p>
+
+### Sparse 3D Reconstruction
+
+<p align="center">
+  <img src="results/map_scatter_3d.png" width="49%" alt="3D sparse map">
+  <img src="results/map_xy.png" width="49%" alt="XY sparse map">
+</p>
 
 ---
 
 ## Pipeline
 
-### 1. Geometric Initialization
-
-The first stage estimates the relative motion between camera frames from matched image features.
-
-The **essential matrix** encodes the epipolar constraint between corresponding normalized image points:
-
-$$
-\mathbf{x}'^{T}\mathbf{E}\mathbf{x} = 0
-$$
-
-where:
-
-* $\mathbf{x}$ is a feature observation in the first frame;
-* $\mathbf{x}'$ is the corresponding observation in the second frame;
-* $\mathbf{E}$ is the essential matrix.
-
-The matrix is decomposed to obtain candidate relative rotations and translations.
-
-The physically valid configuration is selected by verifying the reconstructed scene geometry.
-
----
-
-## 2. Relative Pose Estimation
-
-The relative transformation between consecutive camera poses can be represented as:
-
-$$
-\mathbf{T}
-==========
-
-\begin{bmatrix}
-\mathbf{R} & \mathbf{t} \
-\mathbf{0}^{T} & 1
-\end{bmatrix}
-$$
-
-where:
-
-* $\mathbf{R}\in SO(3)$ is the relative camera rotation;
-* $\mathbf{t}\in\mathbb{R}^{3}$ is the relative translation.
-
-Successive relative transformations are composed to reconstruct the camera trajectory.
-
----
-
-## 3. Triangulation
-
-Once relative camera motion is available, corresponding image observations are used to reconstruct 3D landmarks.
-
-Conceptually:
-
 ```text
-Camera 1                  Camera 2
-   \                         /
-    \                       /
-     \                     /
-      \                   /
-       \                 /
-        \               /
-          3D Landmark
-```
-
-Each landmark is estimated from multiple image observations and becomes part of the map used for subsequent localization.
-
----
-
-## 4. Local Active Map
-
-Instead of relying indiscriminately on every reconstructed landmark, the system maintains a **local active map** containing landmarks currently useful for camera tracking.
-
-This helps keep the localization problem focused on geometrically relevant points.
-
-The active map is updated as the camera moves through the environment.
-
-```text
-Global reconstructed landmarks
-             │
-             ▼
-     Visibility / relevance
-             │
-             ▼
-       Active local map
-             │
-             ▼
-       Camera tracking
+Image measurements
+       │
+       ▼
+Appearance-based feature matching
+       │
+       ▼
+Two-view initialization
+  ├─ Essential Matrix
+  ├─ E decomposition
+  ├─ Cheirality test
+  └─ Linear triangulation
+       │
+       ▼
+Initial sparse 3D cloud
+       │
+       ▼
+Frame-to-frame tracking
+  ├─ Local active-cloud association
+  ├─ 3D → 2D RANSAC + DLT
+  └─ Global-map fallback
+       │
+       ▼
+Projective ICP / SE(3) pose refinement
+       │
+       ▼
+Triangulate new landmarks
+       │
+       ▼
+Update active cloud + global sparse map
+       │
+       ▼
+Estimated trajectory and 3D reconstruction
 ```
 
 ---
 
-## 5. Data Association
+## Method
 
-For every new frame, image observations must be associated with existing 3D landmarks.
+### 1. Two-View Initialization
 
-The project uses geometric consistency and projection information to establish these correspondences.
+The first two frames initialize the visual odometry system.
 
-This stage is critical because incorrect 2D–3D associations directly affect pose estimation.
+Feature correspondences are found using the provided appearance descriptors and converted from pixel coordinates to normalized camera coordinates.
 
-The pipeline includes a **projective ICP-style association procedure**, using the current pose estimate to project map points into the image and identify compatible observations.
+The relative camera geometry is then estimated through the **8-point algorithm**:
 
----
+1. build the epipolar constraint matrix;
+2. solve for the Essential Matrix using SVD;
+3. enforce the rank-2 Essential Matrix constraint;
+4. decompose the matrix into candidate rotations and translations;
+5. triangulate corresponding features;
+6. select the physically valid pose through a **cheirality test**.
 
-## 6. Pose Refinement
-
-Once 2D image observations have been associated with 3D landmarks, the camera pose is refined by minimizing reprojection error.
-
-For a 3D landmark $\mathbf{P}_i$ and corresponding image observation $\mathbf{u}_i$, the reprojection error can be expressed as:
-
-$$
-\mathbf{e}_i
-============
-
-## \mathbf{u}_i
-
-\pi
-\left(
-\mathbf{R}\mathbf{P}_i + \mathbf{t}
-\right)
-$$
-
-where $\pi(\cdot)$ denotes the camera projection function.
-
-The refined pose is obtained by minimizing:
-
-$$
-\min_{\mathbf{R},\mathbf{t}}
-\sum_i
-\left|
-\mathbf{e}_i
-\right|^2
-$$
-
-This optimization aligns the projected landmarks with their measured image positions.
+Because the system is monocular, the translation recovered during initialization is defined only up to scale.
 
 ---
 
-## Complete Architecture
+### 2. Active-Cloud Tracking
+
+A central design decision of this implementation is to avoid relying exclusively on the complete accumulated map for frame-to-frame pose estimation.
+
+Instead, each new frame is primarily tracked against an **active cloud of recently triangulated landmarks**.
+
+For every incoming frame:
+
+1. features are matched between the previous and current image;
+2. matches are propagated to their corresponding active 3D landmarks;
+3. these provide 3D–2D correspondences for camera pose estimation.
+
+This keeps the tracking problem local and reduces the effect of accumulated drift and stale associations.
+
+---
+
+### 3. Robust 3D–2D Pose Estimation
+
+Camera pose is initialized using **RANSAC + Direct Linear Transform (DLT)**.
+
+Each RANSAC iteration:
+
+* samples six 3D–2D correspondences;
+* computes a candidate camera pose through DLT;
+* projects all candidate landmarks into the image;
+* measures reprojection error;
+* selects inliers using a pixel-error threshold.
+
+The best model is finally re-estimated using all detected inliers.
+
+If too few active-cloud correspondences are available, the system falls back to matching against the accumulated global map.
+
+---
+
+### 4. Projective ICP Pose Refinement
+
+The RANSAC/DLT solution is refined by directly minimizing image reprojection error.
+
+For every 3D landmark (P_i), the current pose predicts its image position
+
+[
+\hat{u}_i = \pi(KTP_i)
+]
+
+and the optimization minimizes
+
+[
+E(T)=\sum_i \rho\left(|\hat{u}_i-u_i|^2\right)
+]
+
+where (\rho) is a robust loss.
+
+The optimizer uses:
+
+* an **SE(3) pose update**;
+* analytical projection Jacobians;
+* **Huber weighting** for robust residual handling;
+* damped normal equations;
+* adaptive damping depending on whether a candidate update improves reprojection error.
+
+This behaves as a projective ICP / robust nonlinear least-squares refinement step.
+
+---
+
+### 5. Incremental Triangulation
+
+After estimating the motion between two consecutive frames, matched observations are triangulated to construct the next active cloud.
+
+Candidate landmarks are retained only when:
+
+* they have positive depth in both camera frames;
+* their reprojection is geometrically valid;
+* reprojection error stays below the configured threshold.
+
+The resulting landmarks are transformed into the current camera frame and used for the following tracking iteration.
+
+---
+
+### 6. Sparse Global Map
+
+Newly triangulated points are also transformed into the reference coordinate frame and inserted into a persistent sparse map.
+
+The global map therefore serves two purposes:
+
+* providing a complete reconstruction of the observed scene;
+* acting as a fallback source of correspondences whenever the local active cloud becomes insufficient.
+
+---
+
+## Why an Active Cloud?
+
+An earlier approach based primarily on matching the current frame against the full accumulated map produced significantly less stable tracking.
+
+The final architecture therefore separates two concepts:
+
+**Local map → motion estimation**
+
+**Global map → persistent reconstruction and recovery**
+
+The local active cloud contains landmarks triangulated from recent frame pairs and is continuously refreshed as the camera moves.
+
+This architecture produced considerably more stable incremental tracking across the full sequence.
+
+---
+
+## Evaluation
+
+Since monocular visual odometry cannot recover absolute translation scale directly, trajectory evaluation is based mainly on **relative camera motion**.
+
+For two consecutive estimated poses:
+
+[
+T_{i,i+1}^{est}
+]
+
+the corresponding ground-truth relative transformation is computed and compared independently.
+
+### Rotation
+
+Rotation quality is measured using
+
+[
+e_R = \operatorname{trace}(I-R_{err})
+]
+
+where (R_{err}) represents the relative orientation discrepancy.
+
+### Translation Scale
+
+The relative translation scale is measured as
+
+[
+s_i =
+\frac{|t_{est}|}
+{|t_{gt}|}
+]
+
+A stable sequence of (s_i) indicates that the monocular reconstruction maintains a consistent global scale factor.
+
+The median scale ratio is then used to align the estimated trajectory with the ground truth for absolute-position visualization.
+
+### Map Evaluation
+
+The reconstructed sparse map is scaled using the same estimated scale factor and compared with the available ground-truth landmarks.
+
+---
+
+## Project Structure
 
 ```text
-                 ┌────────────────────┐
-                 │   Monocular Images │
-                 └─────────┬──────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │ Feature Matching   │
-                 └─────────┬──────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │ Essential Matrix   │
-                 │ / Relative Pose    │
-                 └─────────┬──────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │   Triangulation    │
-                 └─────────┬──────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │    Local Map       │
-                 └─────────┬──────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │ Data Association   │
-                 │ / Projective ICP   │
-                 └─────────┬──────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │ Reprojection-Based │
-                 │ Pose Refinement    │
-                 └─────────┬──────────┘
-                           │
-                  ┌────────┴────────┐
-                  ▼                 ▼
-          Camera Trajectory      3D Map
+.
+├── data/
+│   ├── camera.dat
+│   ├── trajectory.dat
+│   ├── world.dat
+│   └── meas-XXXX.dat
+│
+├── src/
+│   ├── assoc/             # appearance-based data association
+│   ├── evaluation/        # trajectory and map metrics
+│   ├── geometry/          # SE(3), transformations and geometry utilities
+│   ├── init/              # Essential Matrix initialization
+│   ├── io/                # dataset loaders
+│   ├── map/               # global sparse-map management
+│   ├── tracking/          # DLT, RANSAC and projective ICP
+│   └── triangulation/     # linear triangulation and active cloud
+│
+├── results/               # evaluation outputs and figures
+├── main_vo_active.m       # visual odometry pipeline
+├── main_evaluate_vo.m     # quantitative evaluation
+├── make_final_plots.py    # publication-quality plots
+└── README.md
 ```
 
 ---
 
-# Results
+## Running the Project
 
-## Relative Pose Estimation
+### Requirements
 
-The pipeline produced:
+The core visual odometry pipeline requires:
 
-> **120 valid relative poses out of 120 evaluated pose transitions.**
+* **GNU Octave**
 
-This indicates that the geometric initialization and tracking pipeline remained operational throughout the evaluated sequence.
+Optional Python visualization requires:
 
----
+* Python 3
+* NumPy
+* SciPy
+* Matplotlib
 
-## Trajectory Accuracy
+### Clone
 
-The estimated camera trajectory achieved a:
-
-> **Position RMSE of 4.39 cm**
-
-The position RMSE summarizes the translational discrepancy between the estimated and reference camera trajectories.
-
----
-
-## Mapping Accuracy
-
-The reconstructed sparse map achieved a:
-
-> **Map RMSE of 11.27 cm**
-
-This measures the geometric error of the reconstructed 3D landmarks relative to the reference map.
-
----
-
-## Results Summary
-
-```text
-Relative poses : 120 / 120 valid
-Position RMSE  : 0.0439 m
-Map RMSE       : 0.1127 m
+```bash
+git clone https://github.com/samuelecivale/probabilistic-robotics-visual-odometry.git
+cd probabilistic-robotics-visual-odometry
 ```
 
-These results show that the pipeline is able to combine geometric initialization, tracking, mapping, and nonlinear refinement into a complete visual-odometry system.
+### Run Visual Odometry
 
----
-
-# Why This Project Matters
-
-The project implements several of the geometric building blocks underlying modern robotic perception systems.
-
-Unlike an end-to-end pose-regression approach, the estimation process remains interpretable:
-
-```text
-Measurements
-     ↓
-Geometry
-     ↓
-Correspondences
-     ↓
-Optimization
-     ↓
-State Estimate
+```bash
+octave-cli --silent main_vo_active.m
 ```
 
-This makes it possible to reason explicitly about:
+The estimated poses and sparse map are saved to:
 
-* camera geometry;
-* pose estimation;
-* landmark uncertainty;
-* data association;
-* reprojection error;
-* mapping;
-* accumulated odometry drift.
+```text
+results/vo_active_results.mat
+```
 
----
+### Evaluate
 
-# Visual Odometry vs SLAM
+```bash
+octave-cli --silent main_evaluate_vo.m
+```
 
-The focus of this project is **visual odometry**.
+This evaluates the estimated trajectory and sparse map against the available ground truth.
 
-The system estimates local camera motion and reconstructs a map that supports tracking.
+### Generate Figures
 
-A complete SLAM system would typically add mechanisms such as:
-
-* loop-closure detection;
-* global map optimization;
-* pose-graph optimization;
-* long-term map consistency.
-
-These components are outside the main scope of this implementation.
+```bash
+python make_final_plots.py
+```
 
 ---
 
-# Tech Stack
+## Dataset
 
-`MATLAB / Octave` · `Computer Vision` · `Visual Odometry` · `3D Geometry` · `Pose Estimation` · `Optimization` · `Robotics`
+The provided dataset contains calibrated image measurements rather than raw images.
 
----
+### `camera.dat`
 
-# Concepts Implemented
+Camera calibration information including the intrinsic matrix and image geometry.
 
-This project covers:
+### `meas-XXXX.dat`
 
-* monocular visual odometry;
-* projective geometry;
-* epipolar geometry;
-* essential matrix estimation;
-* relative camera pose;
-* homogeneous transformations;
-* triangulation;
-* sparse 3D reconstruction;
-* data association;
-* local mapping;
-* projective ICP;
-* reprojection error minimization;
-* trajectory estimation;
-* quantitative localization evaluation.
+Per-frame visual measurements containing:
 
----
+* feature identifier;
+* image coordinates;
+* 10-dimensional appearance descriptor.
 
-# Limitations
+### `trajectory.dat`
 
-As a monocular visual-odometry system, the implementation inherits several limitations typical of purely vision-based geometric estimation.
+Ground-truth camera trajectory used **only for evaluation**.
 
-In particular:
+### `world.dat`
 
-* estimation quality depends on reliable visual correspondences;
-* poor image texture can degrade tracking;
-* incorrect data association can affect camera localization;
-* errors accumulate over time without global correction;
-* no global loop-closure mechanism is included;
-* monocular geometry does not directly provide absolute metric scale without additional information or assumptions.
+Ground-truth 3D landmarks used **only for reconstruction evaluation**.
 
-The project should therefore be interpreted as an implementation and evaluation of a geometric visual-odometry pipeline rather than a production-ready SLAM system.
+Ground truth is therefore not used by the visual odometry estimator itself.
 
 ---
 
-# Possible Extensions
+## What This Project Demonstrates
 
-Future extensions could include:
+This project covers several core concepts in robotics perception and state estimation:
 
-* robust estimation with additional outlier rejection;
-* bundle adjustment;
-* keyframe selection;
-* global map optimization;
-* loop closure;
-* pose-graph optimization;
-* ORB or other modern local descriptors;
-* stereo visual odometry;
-* visual-inertial odometry;
-* ROS integration;
-* real-time implementation in C++.
-
----
-
-# Project Context
-
-This project was developed within the **Probabilistic Robotics** coursework of the MSc in Artificial Intelligence and Robotics at Sapienza University of Rome.
-
-The objective was to implement and understand the geometric estimation pipeline underlying camera-based robot localization and mapping.
+* Monocular Visual Odometry
+* Multi-View Geometry
+* Essential Matrix Estimation
+* Epipolar Geometry
+* Linear Triangulation
+* Perspective Camera Models
+* 3D–2D Pose Estimation
+* RANSAC
+* Direct Linear Transform
+* SE(3) Transformations
+* Robust Nonlinear Least Squares
+* Projective ICP
+* Reprojection-Error Minimization
+* Sparse 3D Mapping
+* Data Association
+* Trajectory Evaluation
+* Monocular Scale Ambiguity
 
 ---
 
-# Author
+## Key Takeaway
 
-**Samuele Civale**
-MSc Artificial Intelligence and Robotics
-Sapienza University of Rome
+The main result of the project is not only the final trajectory accuracy, but the effect of the **mapping strategy on estimator stability**.
 
-GitHub: [@samuelecivale](https://github.com/samuelecivale)
+Using recently triangulated landmarks as a local active map while retaining the complete sparse map as a recovery mechanism produced a robust pipeline capable of estimating all **120 relative camera motions** in the test sequence while maintaining consistent monocular scale and centimeter-level trajectory accuracy after scale alignment.
